@@ -1,0 +1,39 @@
+server:
+  port: 8082
+  error:
+    include-stacktrace: never
+    include-message: never
+
+spring:
+  application:
+    name: product-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/product_db}
+    username: ${DB_USERNAME:oms}
+    password: ${DB_PASSWORD:oms}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.oms: INFO

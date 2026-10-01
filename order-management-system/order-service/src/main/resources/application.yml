@@ -1,0 +1,72 @@
+server:
+  port: 8083
+  error:
+    include-stacktrace: never
+    include-message: never
+
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/order_db}
+    username: ${DB_USERNAME:oms}
+    password: ${DB_PASSWORD:oms}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    consumer:
+      group-id: order-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+    listener:
+      ack-mode: record
+      missing-topics-fatal: false
+    admin:
+      fail-fast: false
+
+product:
+  service:
+    base-url: ${PRODUCT_SERVICE_BASE_URL:http://localhost:8082}
+
+app:
+  kafka:
+    order-created: order-created
+    payment-completed: payment-completed
+    payment-failed: payment-failed
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    com.oms: INFO
+datasource:
+  url: jdbc:postgresql://localhost:5432/order_db
+  username: oms
+  password: oms
